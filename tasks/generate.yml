@@ -10,6 +10,7 @@
       owner: "{{ ssl_certs_path_owner }}"
       group: "{{ ssl_certs_path_group }}"
       mode: "{{ ssl_certs_mode }}"
+    ignore_errors: "{{ ansible_check_mode }}"
 
   - name: Generate certificate config file
     template:
@@ -23,6 +24,7 @@
     command: "openssl req -config {{ ssl_certs_conf_path }} -new -sha256 -key {{ ssl_certs_privkey_path }} -out {{ ssl_certs_csr_path }}"
     args:
       creates: "{{ ssl_certs_csr_path }}"
+    ignore_errors: "{{ ansible_check_mode }}"
 
   - name: CSR file ownership
     file:
@@ -30,6 +32,7 @@
       owner: "{{ ssl_certs_path_owner }}"
       group: "{{ ssl_certs_path_group }}"
       mode: "{{ ssl_certs_mode }}"
+    ignore_errors: "{{ ansible_check_mode }}"
 
   - name: Generate self-signed SSL certificate
     command: "openssl req -config {{ ssl_certs_conf_path }} -nodes -x509 -sha256 -days {{ ssl_certs_days }} -in {{ ssl_certs_csr_path }} -key {{ ssl_certs_privkey_path }} -out {{ ssl_certs_cert_path }} -extensions v3_ca"
@@ -44,4 +47,4 @@
       group: "{{ ssl_certs_path_group }}"
       mode: "{{ ssl_certs_mode }}"
     when: ssl_certs_generate_self_signed
-
+    ignore_errors: "{{ ansible_check_mode }}"
